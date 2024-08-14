@@ -1,6 +1,6 @@
 % This script will merge the 5 yr data with the REDCap IDs from the
-% original study. Once we have those IDs, we can merge with various other
-% prepared datasets from that study
+% original study and with baseline values of outcome data from original
+% study.
 
 clear all
 
@@ -60,8 +60,18 @@ outcomes_wide.Properties.VariableNames{1} = 'record_id_orig';
 
 fiveyr_deid = join(fiveyr_deid, outcomes_wide, "Keys","record_id_orig");
 
-%% reorder, rename id, and save
+%% reorder, rename id
 fiveyr_deid = [fiveyr_deid(:,end-1:end) fiveyr_deid(:,1:end-2)];
 fiveyr_deid.Properties.VariableNames{1} = 'id';
+
+%% merge in baseline values of all outcomes
+load('/Users/yoni/Repositories/OLP4CBP/data/final_acute_outcomes_wide.mat');
+baseline_columns = endsWith(outcomes_wide.Properties.VariableNames, 'baseline');
+outcomes_wide = outcomes_wide(:, [1 find(baseline_columns)]);
+
+fiveyr_deid = join(fiveyr_deid, outcomes_wide, "Keys","id");
+
+
+%% save
 
 writetable(fiveyr_deid, fullfile(basedir, "5YearsFollowUp deidentified reIDed.csv"))

@@ -6,4 +6,4 @@ fiveyr = readtable(fullfile(basedir,'data',"5YearsFollowUp deidentified reIDed.c
 
 %% model outcomes -- need to think through!
 
-% model_olp4cbp_outcomes_at5yr('pain_avg', fiveyr)
+model_olp4cbp_outcomes_at5yr('pain_avg', fiveyr)

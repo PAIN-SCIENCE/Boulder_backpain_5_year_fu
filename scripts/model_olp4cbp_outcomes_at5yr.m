@@ -39,25 +39,9 @@
 %        and within time and within healthies, for the group by time model and the patients vs.
 %        healthies model. Pain_avg must be in the covariates_table
 %
-%   **'bladder_pain_mean'**
-%        Will include average bladder pain rating as a covariate, **CENTERED** within group
-%        and within time and within healthies, for the group by time model and the patients vs.
-%        healthies model. 'bladder_pain_mean' must be in the covariates_table
-%
-%   **'sponpain_mean', 'sponpain_mean_rating'**
-%        Will include average spon pain rating as a covariate, **CENTERED** within group
-%        and within time and within healthies, for the group by time model and the patients vs.
-%        healthies model. 'sponpain_mean_rating' must be in the covariates_table
-%
 %   **'backpaindur', 'backpain_length'**
 %        Will include back pain duration (in years) as a covariate
 %        Note this is strongly correlated with age
-%
-%   **'sponpain_motion'**
-%        Will include head motion in sponpain run as a covariate (n_spike_regs_sponpain -- this variable must be covariates_table)
-%
-%   **'bladder_motion'**
-%        Will include head motion in bladder run as a covariate (n_spike_regs -- this variable must be covariates_table)
 %
 %   **'noverbose'**
 %        Do not show model output
@@ -66,11 +50,6 @@
 %        Standardize all continuous predictors and the outcome, providing
 %        partial correlation coefficient estimates. For an important note
 %        on interpretation, see http://www.daviddisabato.com/blog/2016/4/8/on-effect-sizes-in-multiple-regression
-%
-%   **'p_vs_hc_only'**
-%        Do not run the group by time, or analyses of PRT vs. Control
-%        diffs. This is useful for outcomes that are only of interest or
-%        meaningful at baseline.
 %
 %   **'covs'**
 %        Followed by a matrix of other covariates and a cell array of covariate names
@@ -120,17 +99,10 @@ p_vs_hc_only = false;
 olp_vs_uc_only = false;
 
 if any(strcmp(varargin, 'pain')) || any(strcmp(varargin, 'pain_avg')), pain_covariate = true; end
-if any(strcmp(varargin, 'bladder_pain_mean')), bladder_pain_covariate = true; end
-if any(strcmp(varargin, 'sponpain_mean')) || any(strcmp(varargin, 'sponpain_mean_rating')), sponpain_covariate = true; end
 if any(strcmp(varargin, 'backpaindur')) || any(strcmp(varargin, 'backpain_length')), backpaindur = true; end
-if any(strcmp(varargin, 'sponpain_motion')), sponpain_motion = true; end
-if any(strcmp(varargin, 'bladder_motion')), bladder_motion = true; end
 if any(strcmp(varargin, 'doplots')), doplots = true; end
 if any(strcmp(varargin, 'noverbose')), verbose = false; end
 if any(strcmp(varargin, 'standardize')), standardize = true; end
-if any(strcmp(varargin, 'p_vs_hc_only')), p_vs_hc_only = true; end
-
-if any(strcmp(varargin, 'olp_vs_uc_only')), olp_vs_uc_only = true; end
 
 % initialize output
 % ----------------------------------------------------------------------

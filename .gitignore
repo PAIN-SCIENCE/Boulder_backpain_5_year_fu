@@ -1,1 +1,5 @@
-scripts/*asv
+.DS_Store
+scripts/*.asv
+scripts/*/*.asv
+data/*IDENTIFIED.csv
+	
