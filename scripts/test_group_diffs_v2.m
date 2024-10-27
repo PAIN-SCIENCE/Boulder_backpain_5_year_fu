@@ -2,21 +2,17 @@
 clear all
 
 basedir =  '/Users/yoni/Repositories/Boulder_backpain_5_year_fu';
-fiveyr = readtable(fullfile(basedir,'data',"5YearsFollowUp deidentified reIDed scale scores only.csv"));
-
-wh1 = fiveyr.group==1;
-wh2 = fiveyr.group==2;
-wh3 = fiveyr.group==3;
+fiveyr = readtable(fullfile(basedir,'data',"five_yr_long_final.csv"));
 
 %% test group diffs on pain intensity at 5 yr
-
-outcome = 'pain_avg';
-mdl = test_group_diffs_at_5yr(outcome, fiveyr)
+clc
+outcome = 'odi';
+[mdl1, mdl2] = test_group_diffs_at_5yr(outcome, fiveyr)
 
 %% Outcomes Table: for each outcome, show M (SD) for each group and test of group diffs
 clc
 fprintf('outcome\tPRT\tPLA\tUC\tPRTvsCom\tp\tPLAvsUC\tp\n')
-for i = [3 21:35]
+for i = [3]% 21:35]
     outcome_name = fiveyr.Properties.VariableNames{i};
     outcome = fiveyr{:,outcome_name};
     var1 = outcome(wh1); var2 = outcome(wh2); var3 = outcome(wh3);
@@ -43,34 +39,14 @@ for i = [3 21:35]
 end
 
 
-%% test for group diffs at 5 years, controlling for baseline
-% I am not using the MEM b/c I would need to convert from wide to long
-% also a MEM seems less apt when I want to test for effects at a specific
-% timepoint (5 years), controlling for baseline. I don't see why I would
-% control for other timepoints (eg 1 year)
-
-function mdl = test_group_diffs_at_5yr(outcome, fiveyr)
-
-bl = [outcome '_baseline'];
+%% MEM testing for group diffs at 5 years, controlling for baseline
+function [mdl1, mdl2] = test_group_diffs_at_5yr(outcome, fiveyr)
 
 % contrast coding
-fiveyr.PRT_vs_combined = fiveyr.group == 1;
-fiveyr.PLA_vs_UC = .5 * (fiveyr.group == 2) + -.5 * (fiveyr.group == 3);
+fiveyr.PRT_vs_PLA = .5 * (fiveyr.group == 1) + -.5 * (fiveyr.group == 2);
+fiveyr.PRT_vs_UC = .5 * (fiveyr.group == 1) + -.5 * (fiveyr.group == 3);
 
-mdl = fitglm(fiveyr, [outcome ' ~ PRT_vs_combined + PLA_vs_UC + ' bl]);
-
-end
-
-
-%% test for group diffs at 5 years, no baseline
-% if baseline not available
-
-function mdl = test_group_diffs_at_5yr_nobl(outcome, fiveyr)
-
-% contrast coding
-fiveyr.PRT_vs_combined = fiveyr.group == 1;
-fiveyr.PLA_vs_UC = .5 * (fiveyr.group == 2) + -.5 * (fiveyr.group == 3);
-
-mdl = fitglm(fiveyr, [outcome ' ~ PRT_vs_combined + PLA_vs_UC']);
+mdl1 = fitlme(fiveyr, [outcome ' ~ time*PRT_vs_UC + age + gender + (1|id)']);
+mdl2 = fitlme(fiveyr, [outcome ' ~ time*PRT_vs_PLA + age + gender +(1|id)']);
 
 end
