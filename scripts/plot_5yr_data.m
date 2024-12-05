@@ -9,17 +9,22 @@ fiveyr = readtable(fullfile(basedir,'data',"5YearsFollowUp deidentified reIDed.c
 create_figure('davio')
 
 opts = { 'box',3,'boxwidth',0.8,'boxcolors','k',...
-    'scatter',2,'jitter', 2,'scattercolors','same',...
-    'scattersize',14,'bins',12,'xtlabels',{'PRT' 'Placebo' 'Usual care'}};
+    'scatter',2,'jitter', 2, 'jitterspacing', .5, 'scattercolors','same',...
+    'scattersize',14,'bins',12,'xtlabels',{'PRT' 'Placebo' 'Usual Care'}};
 
-daviolinplot(fiveyr.pain_avg, fiveyr.group, opts{:});
+h = daviolinplot(fiveyr.pain_avg, fiveyr.group, opts{:});
 
 set(gcf,'Position', [  440   287   418   411]);
-ylabel('Pain Intensity at 5 years')
+ylabel('Pain Intensity')
 ylim([-1 8])
 set(gca,'FontSize', 20, 'ytick',0:8)
 
-save(fullfile(figdir, 'pain_violins.pdf'))
+print(gcf, fullfile(figdir, 'pain_violins.pdf'), '-dpdf');
+
+%% save the colors
+cols{1} = h.ds(1).FaceColor;
+cols{2} = h.ds(2).FaceColor;
+cols{3} = h.ds(3).FaceColor;
 
 %% compute % PF / NPF at 5 years
 
@@ -35,7 +40,7 @@ chi, p
 
 create_figure('bar2')
 gray = [.6 .6 .6];
-b = bar(pfnpf * 100, 'FaceColor', gray);
+b = bar(pfnpf * 100, 'FaceColor', 'flat');
 
 xtips1 = b.XEndPoints;
 ytips1 = b.YEndPoints;    
@@ -49,6 +54,13 @@ ylim([0 75])
 
 set(gca, 'FontSize', 18, 'xtick', 1:3, 'XTickLabel', {'PRT' 'Placebo' 'Usual Care'})
 set(gcf,'Position', [ 1224        1186         300         304])
+
+
+% Apply the custom colors to each bar
+for i = 1:3
+    b.CData(i, :) = cols{i};
+end
+grid on
 
 a = gca; a.XTickLabelRotation = 30
 saveas(gcf, fullfile(figdir, 'percent_PFNPF_3groups.pdf'))
