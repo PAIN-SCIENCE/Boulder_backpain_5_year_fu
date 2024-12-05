@@ -5,10 +5,13 @@ basedir =  '/Users/yoni/Repositories/Boulder_backpain_5_year_fu';
 figdir = fullfile(basedir,'figs');
 fiveyr = readtable(fullfile(basedir,'data',"5YearsFollowUp deidentified reIDed.csv"));
 
+colors = [0 0 1; .5 0 .5; .5 .5 .5];
+
+
 %% violin plots of group diffs at 5 years 
 create_figure('davio')
 
-opts = { 'box',3,'boxwidth',0.8,'boxcolors','k',...
+opts = { 'box',3,'boxwidth',0.8,'boxcolors','k', 'colors', colors,...
     'scatter',2,'jitter', 2, 'jitterspacing', .5, 'scattercolors','same',...
     'scattersize',14,'bins',12,'xtlabels',{'PRT' 'Placebo' 'Usual Care'}};
 

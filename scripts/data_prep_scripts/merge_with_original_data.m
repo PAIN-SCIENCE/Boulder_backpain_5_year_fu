@@ -51,8 +51,7 @@ fiveyr_deid = removevars(fiveyr_deid, {'name', 'redcap_survey_identifier', 'firs
 
 %% merge in group assignment
 
-% -- WHEN YOU LOAD IN THE 12 MONTH DATA, SOME Ps ARE MISSING! NEED TO
-% EXPLORE WHY, LATER ---
+% -- WHEN YOU LOAD IN THE 12 MONTH DATA, 6 Ps ARE MISSING - unclear why
 
 load('/Users/yoni/Repositories/OLP4CBP/data/final_acute_outcomes_wide.mat');
 outcomes_wide = outcomes_wide(:, {'id', 'group'});
