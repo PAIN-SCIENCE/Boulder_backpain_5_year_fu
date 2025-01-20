@@ -54,8 +54,6 @@ ranked_cats_MB = {
 };
 
 %% test for group diffs
-fprintf('outcome\tPRT\tPLA\tUC\tPRTvsUC\tp\tPLAvsUC\tp\n')
-
 outcomes = {'STR_rating' 'MB_rating', 'STRvsMB_rating'};
 %outcomes = ranked_cats_MB;
 
