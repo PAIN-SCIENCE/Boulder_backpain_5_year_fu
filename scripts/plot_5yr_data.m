@@ -11,17 +11,19 @@ colors = [0 0 1; .5 0 .5; .5 .5 .5];
 %% violin plots of group diffs at 5 years 
 create_figure('davio')
 
-opts = { 'box',3,'boxwidth',0.8,'boxcolors','k', 'colors', colors,...
-    'scatter',2,'jitter', 2, 'jitterspacing', .5, 'scattercolors','same',...
-    'scattersize',14,'bins',12,'xtlabels',{'PRT' 'Placebo' 'Usual Care'}};
+
+opts = {'box',3, 'colors', colors, 'violin', 'half', ...
+    'scatter',1,'jitter', 2, 'jitterspacing', 1, 'scattercolors','same',...
+    'scattersize',22,'bins',12,'xtlabels',{'PRT' 'Placebo' 'Usual Care'}};
 
 h = daviolinplot(fiveyr.pain_avg, fiveyr.group, opts{:});
 
-set(gcf,'Position', [  440   287   418   411]);
-ylabel('Pain Intensity')
-ylim([-1 8])
-set(gca,'FontSize', 20, 'ytick',0:8)
+ylabel('Pain Intensity');
+ylim([-1 8]);
+xlim([0 4]);
+set(gca,'FontSize', 20, 'ytick',0:8);
 
+set(gcf,'Position', [  440   287   689   455]);
 print(gcf, fullfile(figdir, 'pain_violins.pdf'), '-dpdf');
 
 %% save the colors
@@ -29,11 +31,23 @@ cols{1} = h.ds(1).FaceColor;
 cols{2} = h.ds(2).FaceColor;
 cols{3} = h.ds(3).FaceColor;
 
-%% compute % PF / NPF at 5 years
-
+%% compute % PF / NPF at 5 years, across 3 groups
+clc
 fiveyr.pfnpf = fiveyr.pain_avg <= 1;
 [percimp, chi, p] = crosstab(fiveyr.pfnpf, fiveyr.group);
 n = histcounts(fiveyr.group);
+pfnpf = percimp(2,:) ./ n
+
+% chi square test of PF NPF is significant
+chi, p
+
+%% compute % PF / NPF at 5 years, PRT vs one group
+clc
+fiveyr_temp = fiveyr(fiveyr.group==1 | fiveyr.group==2, :); % change the 3 to a 2 to compare PRT vs which group
+fiveyr_temp.pfnpf = fiveyr_temp.pain_avg <= 1;
+[percimp, chi, p] = crosstab(fiveyr_temp.pfnpf, fiveyr_temp.group);
+n = histcounts(fiveyr_temp.group);
+if n(2)==0, n=[n(1) n(3)]; end % hack to make it work for groups 1 and 3
 pfnpf = percimp(2,:) ./ n
 
 % chi square test of PF NPF is significant

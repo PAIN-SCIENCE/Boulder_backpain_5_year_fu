@@ -54,6 +54,7 @@ ranked_cats_MB = {
 };
 
 %% test for group diffs
+fprintf('outcome\tPRT\tPLA\tUC\tPRTvsUC\tp\tPLAvsUC\tp\n')
 outcomes = {'STR_rating' 'MB_rating', 'STRvsMB_rating'};
 %outcomes = ranked_cats_MB;
 
@@ -66,11 +67,13 @@ for i=1:length(outcomes)
     var1 = outcome(wh1); var2 = outcome(wh2); var3 = outcome(wh3);
     
     [mdl1, mdl2] = test_group_diffs_at_5yr_nobl(outcome_name, fiveyrAttr);
+    [smd1, smd2] = smd_at_5yr_nobl(outcome_name, fiveyrAttr);
     
     fprintf(['%s\t%3.2f (%3.2f)\t%3.2f (%3.2f)\t%3.2f (%3.2f)\t' ...
-                '%3.2f\t%0.3f\t%3.2f\t%0.3f\n'], ...
+                '%3.2f\t%0.3f\t%3.2f\t%0.3f\t%3.2f\t%0.3f\n'], ...
             outcome_name, nanmean(var1), nanstd(var1), nanmean(var2), nanstd(var2), nanmean(var3), nanstd(var3), ...
-            mdl1.Coefficients.Estimate(4), mdl1.Coefficients.pValue(4), mdl2.Coefficients.Estimate(4), mdl2.Coefficients.pValue(4));
+            mdl1.Coefficients.Estimate(4), mdl1.Coefficients.pValue(4), smd1, ...
+            mdl2.Coefficients.Estimate(4), mdl2.Coefficients.pValue(4), smd2);
 end
 
 %% test whether pain at 5 yrs is correlated within group with two mechs: TSK, MBattr
@@ -92,5 +95,21 @@ fiveyr.PRT_vs_PLA = fiveyr.PRT_vs_PLA + .5;
 
 mdl1 = fitlme(fiveyr, [outcome ' ~ PRT_vs_PLA + age + gender']);
 mdl2 = fitlme(fiveyr, [outcome ' ~ PRT_vs_UC + age + gender']);
+
+end
+
+% compute SMD at 5 years 
+function [smd1, smd2] = smd_at_5yr_nobl(outcome, fiveyr)
+
+g1 = fiveyr{fiveyr.group==1,outcome};
+g2 = fiveyr{fiveyr.group==2,outcome};
+g3 = fiveyr{fiveyr.group==3,outcome};
+
+%smd1=meanEffectSize(g1,g2,effect="glass");
+%smd2=meanEffectSize(g1,g3,effect="cohen");
+
+% for consistency w/ how i compute SMD for other 2ndary outcomes
+smd1=(mean(g1,"omitnan")-mean(g2,"omitnan"))/std([g1; g2; g3],"omitnan");
+smd2=(mean(g1,"omitnan")-mean(g3,"omitnan"))/std([g1; g2; g3],"omitnan");
 
 end
