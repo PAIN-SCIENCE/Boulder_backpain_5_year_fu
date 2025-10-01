@@ -2,4 +2,5 @@
 scripts/*.asv
 scripts/*/*.asv
 data/*IDENTIFIED.csv
-	
+reports/*/*/*/*
+.Rproj.user
